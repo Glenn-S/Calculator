@@ -183,7 +183,10 @@ namespace Calculator {
 
         // Numeric buttons
         private void btn0_Click(object sender, EventArgs e) {
-            if (ENTER) ENTER = false;
+            if (ENTER) {
+                ENTER = false;
+                m_result = "";
+            }
             m_result += "0";
             answerLbl.Text = m_result;
             m_tempValue += "0";
@@ -192,7 +195,10 @@ namespace Calculator {
             answerLbl.Focus();
         }
         private void btn1_Click(object sender, EventArgs e) {
-            if (ENTER) ENTER = false;
+            if (ENTER) {
+                ENTER = false;
+                m_result = "";
+            }
             m_result += "1";
             answerLbl.Text = m_result;
             m_tempValue += "1";
@@ -201,7 +207,10 @@ namespace Calculator {
             answerLbl.Focus();
         }
         private void btn2_Click(object sender, EventArgs e) {
-            if (ENTER) ENTER = false;
+            if (ENTER) {
+                ENTER = false;
+                m_result = "";
+            }
             m_result += "2";
             answerLbl.Text = m_result;
             m_tempValue += "2";
@@ -210,7 +219,10 @@ namespace Calculator {
             answerLbl.Focus();
         }
         private void btn3_Click(object sender, EventArgs e) {
-            if (ENTER) ENTER = false;
+            if (ENTER) {
+                ENTER = false;
+                m_result = "";
+            }
             m_result += "3";
             answerLbl.Text = m_result;
             m_tempValue += "3";
@@ -219,7 +231,10 @@ namespace Calculator {
             answerLbl.Focus();
         }
         private void btn4_Click(object sender, EventArgs e) {
-            if (ENTER) ENTER = false;
+            if (ENTER) {
+                ENTER = false;
+                m_result = "";
+            }
             m_result += "4";
             answerLbl.Text = m_result;
             m_tempValue += "4";
@@ -228,7 +243,10 @@ namespace Calculator {
             answerLbl.Focus();
         }
         private void btn5_Click(object sender, EventArgs e) {
-            if (ENTER) ENTER = false;
+            if (ENTER) {
+                ENTER = false;
+                m_result = "";
+            }
             m_result += "5";
             answerLbl.Text = m_result;
             m_tempValue += "5";
@@ -237,7 +255,10 @@ namespace Calculator {
             answerLbl.Focus();
         }
         private void btn6_Click(object sender, EventArgs e) {
-            if (ENTER) ENTER = false;
+            if (ENTER) {
+                ENTER = false;
+                m_result = "";
+            }
             m_result += "6";
             answerLbl.Text = m_result;
             m_tempValue += "6";
@@ -246,7 +267,10 @@ namespace Calculator {
             answerLbl.Focus();
         }
         private void btn7_Click(object sender, EventArgs e) {
-            if (ENTER) ENTER = false;
+            if (ENTER) {
+                ENTER = false;
+                m_result = "";
+            }
             m_result += "7";
             answerLbl.Text = m_result;
             m_tempValue += "7";
@@ -255,7 +279,10 @@ namespace Calculator {
             answerLbl.Focus();
         }
         private void btn8_Click(object sender, EventArgs e) {
-            if (ENTER) ENTER = false;
+            if (ENTER) {
+                ENTER = false;
+                m_result = "";
+            }
             m_result += "8";
             answerLbl.Text = m_result;
             m_tempValue += "8";
@@ -264,7 +291,10 @@ namespace Calculator {
             answerLbl.Focus();
         }
         private void btn9_Click(object sender, EventArgs e) {
-            if (ENTER) ENTER = false;
+            if (ENTER) {
+                ENTER = false;
+                m_result = "";
+            }
             m_result += "9";
             answerLbl.Text = m_result;
             m_tempValue += "9";
@@ -274,7 +304,10 @@ namespace Calculator {
         }
         // non numeric buttons
         private void btnDot_Click(object sender, EventArgs e) {
-            if (ENTER) ENTER = false;
+            if (ENTER) {
+                ENTER = false;
+                m_result = "";
+            }
             m_result += ".";
             answerLbl.Text = m_result;
             m_tempValue += ".";
@@ -283,7 +316,10 @@ namespace Calculator {
             answerLbl.Focus();
         }
         private void btnRightParenth_Click(object sender, EventArgs e) {
-            if (ENTER) ENTER = false;
+            if (ENTER) {
+                ENTER = false;
+                m_result = "";
+            }
             m_result += ")";
             answerLbl.Text = m_result;
 
@@ -321,7 +357,10 @@ namespace Calculator {
             }    
         }
         private void btnLeftParenth_Click(object sender, EventArgs e) {
-            if (ENTER) ENTER = false;
+            if (ENTER) {
+                ENTER = false;
+                m_result = "";
+            }
             m_result += "(";
             answerLbl.Text = m_result;
             m_operators.Push('(');
@@ -331,7 +370,10 @@ namespace Calculator {
             answerLbl.Focus();
         }
         private void btnDiv_Click(object sender, EventArgs e) {
-            if (ENTER) ENTER = false;
+            if (ENTER) {
+                ENTER = false;
+                m_result = "";
+            }
             m_result += "/";
             answerLbl.Text = m_result;
 
@@ -359,7 +401,10 @@ namespace Calculator {
             }
         }
         private void btnTimes_Click(object sender, EventArgs e) {
-            if (ENTER) ENTER = false;
+            if (ENTER) {
+                ENTER = false;
+                m_result = "";
+            }
             m_result += "*";
             answerLbl.Text = m_result;
 
@@ -387,7 +432,10 @@ namespace Calculator {
             }
         }
         private void btnMinus_Click(object sender, EventArgs e) {
-            if (ENTER) ENTER = false;
+            if (ENTER) {
+                ENTER = false;
+                m_result = "";
+            }
             m_result += "-";
             answerLbl.Text = m_result;
 
@@ -428,7 +476,10 @@ namespace Calculator {
             }
         }
         private void btnPlus_Click(object sender, EventArgs e) {
-            if (ENTER) ENTER = false;
+            if (ENTER) {
+                ENTER = false;
+                m_result = "";
+            }
             m_result += "+";
             answerLbl.Text = m_result;
 
