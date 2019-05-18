@@ -15,7 +15,7 @@ namespace Calculator {
         private String m_result = ""; // store result for printing
         private String m_tempValue = ""; // store string value of number
         private decimal m_val; // store decimal value of number
-        private char m_lastVal; // keep track of the last value used
+        private char m_lastVal = '\0'; // keep track of the last value used
         private Stack<decimal> m_values = new Stack<decimal>(); // stack for storing the values for calculation 
         private Stack<char> m_operators = new Stack<char>(); // stack for storing the operators for calculation
         private Font m_originalFont;
@@ -154,6 +154,7 @@ namespace Calculator {
                 } finally {
                     VALID = true; // reset for next iteration
                     ENTER = true;
+                    m_lastVal = '\0'; // reset last value character
                     StringLabelResize(); // resize label if need be
                     answerLbl.Focus();
                 }
@@ -172,6 +173,7 @@ namespace Calculator {
             m_result = "";
             answerLbl.Text = m_result;
             m_tempValue = "";
+            m_lastVal = '\0'; // reset last value character
 
             // make sure the stacks are reset after
             m_values.Clear();
@@ -323,39 +325,45 @@ namespace Calculator {
             m_result += ")";
             answerLbl.Text = m_result;
 
-            // TODO error occurs if ) is the first character pressed 
+            // TODO error occurs if ) doesn't have a parenthesis to be paired with 
 
-            try {
-                if (m_tempValue.Length != 0) {
-                    m_val = Convert.ToDecimal(m_tempValue);
-                    m_values.Push(m_val); // get the last number
-                    m_tempValue = ""; // reset temp value
-                }
-               
-                // go through and process the parenthesis
-                while (m_operators.Peek() != '(' && VALID) {
-                    VALID = StackCalc();
+            if (m_lastVal != '\0') {
+                try {
+                    if (m_tempValue.Length != 0) {
+                        m_val = Convert.ToDecimal(m_tempValue);
+                        m_values.Push(m_val); // get the last number
+                        m_tempValue = ""; // reset temp value
+                    }
 
-                    Console.WriteLine(m_operators.Peek() + ", size: " + m_operators.Count);
+                    // go through and process the parenthesis
+                    while (m_operators.Peek() != '(' && VALID) {
+                        VALID = StackCalc();
+
+                        Console.WriteLine(m_operators.Peek() + ", size: " + m_operators.Count);
+                        foreach (decimal d in m_values)
+                            Console.Write(d + ", ");
+                    }
+                    Console.WriteLine(m_operators.Pop() + "was popped"); // remove the left parenthesis
                     foreach (decimal d in m_values)
                         Console.Write(d + ", ");
+                } catch (FormatException formatE) {
+                    Console.WriteLine(formatE.Message);
+                    VALID = false;
+                    m_errorMessage = "Error";
+                } catch (OverflowException overflowE) {
+                    Console.WriteLine(overflowE.Message);
+                    VALID = false;
+                    m_errorMessage = "Error";
+                } finally {
+                    m_lastVal = ')';
+                    StringLabelResize(); // resize label if need be
+                    answerLbl.Focus();
                 }
-                Console.WriteLine(m_operators.Pop() + "was popped"); // remove the left parenthesis
-                foreach (decimal d in m_values)
-                    Console.Write(d + ", ");
-            } catch (FormatException formatE) {
-                Console.WriteLine(formatE.Message);
+            } else {
                 VALID = false;
                 m_errorMessage = "Error";
-            } catch (OverflowException overflowE) {
-                Console.WriteLine(overflowE.Message);
-                VALID = false;
-                m_errorMessage = "Error";
-            } finally {
-                m_lastVal = ')';
-                StringLabelResize(); // resize label if need be
-                answerLbl.Focus();
-            }    
+            }
+
         }
         private void btnLeftParenth_Click(object sender, EventArgs e) {
             if (ENTER) {
@@ -364,11 +372,32 @@ namespace Calculator {
             }
             m_result += "(";
             answerLbl.Text = m_result;
-            m_operators.Push('(');
-            m_tempValue = "";
-            m_lastVal = '(';
-            StringLabelResize(); // resize label if need be
-            answerLbl.Focus();
+
+            if (VALID) { // only perform calculations if the current equation is valid
+                try {
+                    if (m_tempValue.Length > 0) {
+                        m_val = Convert.ToDecimal(m_tempValue);
+                        m_values.Push(m_val); // get the last number
+                        m_tempValue = ""; // reset temp value
+
+                        // if a value was right next to a bracket, add in a mutliplication operator
+                        m_operators.Push('*');
+                    }
+                    m_operators.Push('('); // highest precedence (right now) so push
+                } catch (FormatException formatE) {
+                    Console.WriteLine(formatE.Message);
+                    VALID = false;
+                    m_errorMessage = "Error";
+                } catch (OverflowException overflowE) {
+                    Console.WriteLine(overflowE.Message);
+                    VALID = false;
+                    m_errorMessage = "Error";
+                } finally {
+                    m_lastVal = '(';
+                    StringLabelResize(); // resize label if need be
+                    answerLbl.Focus();
+                }
+            }
         }
         private void btnDiv_Click(object sender, EventArgs e) {
             if (ENTER) {
@@ -566,7 +595,7 @@ namespace Calculator {
                                 break;
                         }
                     } catch (InvalidOperationException e) {
-                        Console.WriteLine(e.Message + "HERE");
+                        Console.WriteLine(e.Message);
                         m_errorMessage = "Error";
                         return false;
                     }
