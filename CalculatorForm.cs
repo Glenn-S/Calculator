@@ -347,9 +347,10 @@ namespace Calculator {
 
             if (VALID) { // only perform calculations if the current equation is valid
                 // if the string is empty, the sign is a unary operator, not a binary op
-                if (m_tempValue.Length == 0 ) { // ISSUE for example ((1+2)*3)-1 result is -1
+                if (m_tempValue.Length == 0 ) { // ISSUE for example ((1+2)*3)-1 result is -1 (know, what's wrong, need to figure out how to fix it)
                     m_tempValue += "-";
                     answerLbl.Focus();
+
                 } else { // binary op so process
                     try {
                         if (m_tempValue.Length > 0) {
