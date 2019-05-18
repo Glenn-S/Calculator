@@ -15,6 +15,7 @@ namespace Calculator {
         private String m_result = ""; // store result for printing
         private String m_tempValue = ""; // store string value of number
         private decimal m_val; // store decimal value of number
+        private char m_lastVal; // keep track of the last value used
         private Stack<decimal> m_values = new Stack<decimal>(); // stack for storing the values for calculation 
         private Stack<char> m_operators = new Stack<char>(); // stack for storing the operators for calculation
 
@@ -177,60 +178,70 @@ namespace Calculator {
             m_result += "0";
             answerLbl.Text = m_result;
             m_tempValue += "0";
+            m_lastVal = '0';
             answerLbl.Focus();
         }
         private void btn1_Click(object sender, EventArgs e) {
             m_result += "1";
             answerLbl.Text = m_result;
             m_tempValue += "1";
+            m_lastVal = '1';
             answerLbl.Focus();
         }
         private void btn2_Click(object sender, EventArgs e) {
             m_result += "2";
             answerLbl.Text = m_result;
             m_tempValue += "2";
+            m_lastVal = '2';
             answerLbl.Focus();
         }
         private void btn3_Click(object sender, EventArgs e) {
             m_result += "3";
             answerLbl.Text = m_result;
             m_tempValue += "3";
+            m_lastVal = '3';
             answerLbl.Focus();
         }
         private void btn4_Click(object sender, EventArgs e) {
             m_result += "4";
             answerLbl.Text = m_result;
             m_tempValue += "4";
+            m_lastVal = '4';
             answerLbl.Focus();
         }
         private void btn5_Click(object sender, EventArgs e) {
             m_result += "5";
             answerLbl.Text = m_result;
             m_tempValue += "5";
+            m_lastVal = '5';
             answerLbl.Focus();
         }
         private void btn6_Click(object sender, EventArgs e) {
             m_result += "6";
             answerLbl.Text = m_result;
             m_tempValue += "6";
+            m_lastVal = '6';
             answerLbl.Focus();
         }
         private void btn7_Click(object sender, EventArgs e) {
             m_result += "7";
             answerLbl.Text = m_result;
             m_tempValue += "7";
+            m_lastVal = '7';
             answerLbl.Focus();
         }
         private void btn8_Click(object sender, EventArgs e) {
             m_result += "8";
             answerLbl.Text = m_result;
             m_tempValue += "8";
+            m_lastVal = '8';
             answerLbl.Focus();
         }
         private void btn9_Click(object sender, EventArgs e) {
             m_result += "9";
             answerLbl.Text = m_result;
             m_tempValue += "9";
+            m_lastVal = '9';
             answerLbl.Focus();
         }
         // non numeric buttons
@@ -238,6 +249,7 @@ namespace Calculator {
             m_result += ".";
             answerLbl.Text = m_result;
             m_tempValue += ".";
+            m_lastVal = '.';
             answerLbl.Focus();
         }
 
@@ -277,6 +289,7 @@ namespace Calculator {
                 VALID = false;
                 m_errorMessage = "Error";
             } finally {
+                m_lastVal = ')';
                 answerLbl.Focus();
             }    
         }
@@ -285,6 +298,7 @@ namespace Calculator {
             answerLbl.Text = m_result;
             m_operators.Push('(');
             m_tempValue = "";
+            m_lastVal = '(';
             answerLbl.Focus();
         }
 
@@ -312,6 +326,7 @@ namespace Calculator {
                     VALID = false;
                     m_errorMessage = "Error";
                 } finally {
+                    m_lastVal = '/';
                     answerLbl.Focus();
                 }
             }
@@ -337,6 +352,7 @@ namespace Calculator {
                     VALID = false;
                     m_errorMessage = "Error";
                 } finally {
+                    m_lastVal = '*';
                     answerLbl.Focus();
                 }
             }
@@ -347,7 +363,9 @@ namespace Calculator {
 
             if (VALID) { // only perform calculations if the current equation is valid
                 // if the string is empty, the sign is a unary operator, not a binary op
-                if (m_tempValue.Length == 0 ) { // ISSUE for example ((1+2)*3)-1 result is -1 (know, what's wrong, need to figure out how to fix it)
+                Console.WriteLine(m_lastVal + " was the last value");
+
+                if (m_tempValue.Length == 0 && m_lastVal != ')') { // choose when to properly apply the unary op
                     m_tempValue += "-";
                     answerLbl.Focus();
 
@@ -372,6 +390,7 @@ namespace Calculator {
                         VALID = false;
                         m_errorMessage = "Error";
                     } finally {
+                        m_lastVal = '-';
                         answerLbl.Focus();
                     }
                 }
@@ -402,6 +421,7 @@ namespace Calculator {
                     VALID = false;
                     m_errorMessage = "Error";
                 } finally {
+                    m_lastVal = '+';
                     answerLbl.Focus();
                 }
             }
