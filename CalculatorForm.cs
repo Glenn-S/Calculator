@@ -323,6 +323,8 @@ namespace Calculator {
             m_result += ")";
             answerLbl.Text = m_result;
 
+            // TODO error occurs if ) is the first character pressed 
+
             try {
                 if (m_tempValue.Length != 0) {
                     m_val = Convert.ToDecimal(m_tempValue);
@@ -330,7 +332,6 @@ namespace Calculator {
                     m_tempValue = ""; // reset temp value
                 }
                
-
                 // go through and process the parenthesis
                 while (m_operators.Peek() != '(' && VALID) {
                     VALID = StackCalc();
