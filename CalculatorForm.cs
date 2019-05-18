@@ -18,30 +18,35 @@ namespace Calculator {
         private char m_lastVal; // keep track of the last value used
         private Stack<decimal> m_values = new Stack<decimal>(); // stack for storing the values for calculation 
         private Stack<char> m_operators = new Stack<char>(); // stack for storing the operators for calculation
+        private Font m_originalFont;
 
         private bool VALID = true; // keep track of if there has been an error or undefined mathematical behaviour
+        private bool ENTER = false; // keep track of if enter has been pressed or not
         private string m_errorMessage = ""; // store the error message for displaying when the equals key is pressed
 
-
+        
+        ///////////////////////////////////////////// INIT METHODS //////////////////////////////////////////////////
+        
         // Public methods
         public CalculatorForm() {
             InitializeComponent();
             answerLbl.Focus();
+            m_originalFont = answerLbl.Font;
             this.KeyPress += new KeyPressEventHandler(CalculatorForm_KeyPress);
         }
  
-
         // Private methods
         private void CalculatorForm_Load(object sender, EventArgs e) {
             // perform additional setup if needed
         }
-
-
         private void CalculatorForm_KeyPress(object sender, KeyPressEventArgs e) {
             switch (e.KeyChar.ToString()) {
                 case "\r":
                 case "\n":
                     btnEqual_Click(sender, e);
+                    break;
+                case "\b":
+                    btnClear_Click(sender, e);
                     break;
                 case "0":
                     btn0_Click(sender, e);
@@ -76,14 +81,12 @@ namespace Calculator {
                 case ".":
                     btnDot_Click(sender, e);
                     break;
-                //case "(":
-                //    m_result += " (";
-                //    answerLbl.Text = m_result;
-                //    break;
-                //case ")":
-                //    m_result += ") ";
-                //    answerLbl.Text = m_result;
-                //    break;
+                case "(":
+                    btnLeftParenth_Click(sender, e);
+                    break;
+                case ")":
+                    btnRightParenth_Click(sender, e);
+                    break;
                 case "*":
                 case "x":
                 case "X":
@@ -102,63 +105,67 @@ namespace Calculator {
             answerLbl.Focus();
         }
  
-
-
-
         // Labels
         private void answerLbl_Click(object sender, EventArgs e) {
             answerLbl.Text = m_result;
         }
 
-        /////////////////////////////////////////////////////////////////////////////////////
-        /// Button Controls
-        /////////////////////////////////////////////////////////////////////////////////////
-
-        // Future functionality
-
-
+        
+        //////////////////////////////////////// BUTTON CONTROLS ///////////////////////////////////////
+        
         private void btnEqual_Click(object sender, EventArgs e) {
             // parse string and print result
-            
-            try {
-                if (m_tempValue.Length > 0) {
-                    m_val = Convert.ToDecimal(m_tempValue);
-                    m_values.Push(m_val); // get the last number
-                    m_tempValue = ""; // reset temp value
-                }
-                m_result = "";
-                
-                // keep finishing the calculations 
-                while (m_operators.Count != 0 && VALID) {
-                    VALID = StackCalc();
-                }
-                    
-
-                if (VALID) {
-                    try {
-                        m_result = m_values.Pop().ToString();
-                    } catch (InvalidOperationException operationE) {
-                        Console.WriteLine(operationE.Message);
-                        m_result = "Error";
+            if (!ENTER) {
+                try {
+                    if (m_tempValue.Length > 0) {
+                        m_val = Convert.ToDecimal(m_tempValue);
+                        m_values.Push(m_val); // get the last number
+                        m_tempValue = ""; // reset temp value
                     }
-                } else {
-                    m_result = m_errorMessage;
-                }
-                answerLbl.Text = m_result; // print the final result
+                    m_result = "";
 
-                // make sure the stacks are reset after
-                m_values.Clear();
-                m_operators.Clear();
-            } catch (FormatException formatE) {
-                Console.WriteLine(formatE.Message + "HERE");
-                answerLbl.Text = "Error";
-            } catch (OverflowException overflowE) {
-                Console.WriteLine(overflowE.Message);
-                answerLbl.Text = "Error";
-            } finally {
+                    // keep finishing the calculations 
+                    while (m_operators.Count != 0 && VALID) {
+                        VALID = StackCalc();
+                    }
+
+
+                    if (VALID) {
+                        try {
+                            m_result = m_values.Pop().ToString();
+                        } catch (InvalidOperationException operationE) {
+                            Console.WriteLine(operationE.Message);
+                            m_result = "Error";
+                        }
+                    } else {
+                        m_result = m_errorMessage;
+                    }
+                    answerLbl.Text = m_result; // print the final result
+
+                    // make sure the stacks are reset after
+                    m_values.Clear();
+                    m_operators.Clear();
+                } catch (FormatException formatE) {
+                    Console.WriteLine(formatE.Message + "HERE");
+                    answerLbl.Text = "Error";
+                } catch (OverflowException overflowE) {
+                    Console.WriteLine(overflowE.Message);
+                    answerLbl.Text = "Number was too large/small";
+                } finally {
+                    VALID = true; // reset for next iteration
+                    ENTER = true;
+                    StringLabelResize(); // resize label if need be
+                    answerLbl.Focus();
+                }
+            } else {
                 VALID = true; // reset for next iteration
+                ENTER = true; // enter has been pressed twice so reset
+                m_result = "";
+                answerLbl.Text = m_result; // print the final result
+                StringLabelResize(); // resize label if need be
                 answerLbl.Focus();
-            }   
+            }
+             
         }
         // Reset Button
         private void btnClear_Click(object sender, EventArgs e) {
@@ -169,95 +176,114 @@ namespace Calculator {
             // make sure the stacks are reset after
             m_values.Clear();
             m_operators.Clear();
+            answerLbl.Font = m_originalFont; // reset the font when clearing
             answerLbl.Focus();
         }
 
 
         // Numeric buttons
         private void btn0_Click(object sender, EventArgs e) {
+            if (ENTER) ENTER = false;
             m_result += "0";
             answerLbl.Text = m_result;
             m_tempValue += "0";
             m_lastVal = '0';
+            StringLabelResize(); // resize label if need be
             answerLbl.Focus();
         }
         private void btn1_Click(object sender, EventArgs e) {
+            if (ENTER) ENTER = false;
             m_result += "1";
             answerLbl.Text = m_result;
             m_tempValue += "1";
             m_lastVal = '1';
+            StringLabelResize(); // resize label if need be
             answerLbl.Focus();
         }
         private void btn2_Click(object sender, EventArgs e) {
+            if (ENTER) ENTER = false;
             m_result += "2";
             answerLbl.Text = m_result;
             m_tempValue += "2";
             m_lastVal = '2';
+            StringLabelResize(); // resize label if need be
             answerLbl.Focus();
         }
         private void btn3_Click(object sender, EventArgs e) {
+            if (ENTER) ENTER = false;
             m_result += "3";
             answerLbl.Text = m_result;
             m_tempValue += "3";
             m_lastVal = '3';
+            StringLabelResize(); // resize label if need be
             answerLbl.Focus();
         }
         private void btn4_Click(object sender, EventArgs e) {
+            if (ENTER) ENTER = false;
             m_result += "4";
             answerLbl.Text = m_result;
             m_tempValue += "4";
             m_lastVal = '4';
+            StringLabelResize(); // resize label if need be
             answerLbl.Focus();
         }
         private void btn5_Click(object sender, EventArgs e) {
+            if (ENTER) ENTER = false;
             m_result += "5";
             answerLbl.Text = m_result;
             m_tempValue += "5";
             m_lastVal = '5';
+            StringLabelResize(); // resize label if need be
             answerLbl.Focus();
         }
         private void btn6_Click(object sender, EventArgs e) {
+            if (ENTER) ENTER = false;
             m_result += "6";
             answerLbl.Text = m_result;
             m_tempValue += "6";
             m_lastVal = '6';
+            StringLabelResize(); // resize label if need be
             answerLbl.Focus();
         }
         private void btn7_Click(object sender, EventArgs e) {
+            if (ENTER) ENTER = false;
             m_result += "7";
             answerLbl.Text = m_result;
             m_tempValue += "7";
             m_lastVal = '7';
+            StringLabelResize(); // resize label if need be
             answerLbl.Focus();
         }
         private void btn8_Click(object sender, EventArgs e) {
+            if (ENTER) ENTER = false;
             m_result += "8";
             answerLbl.Text = m_result;
             m_tempValue += "8";
             m_lastVal = '8';
+            StringLabelResize(); // resize label if need be
             answerLbl.Focus();
         }
         private void btn9_Click(object sender, EventArgs e) {
+            if (ENTER) ENTER = false;
             m_result += "9";
             answerLbl.Text = m_result;
             m_tempValue += "9";
             m_lastVal = '9';
+            StringLabelResize(); // resize label if need be
             answerLbl.Focus();
         }
         // non numeric buttons
         private void btnDot_Click(object sender, EventArgs e) {
+            if (ENTER) ENTER = false;
             m_result += ".";
             answerLbl.Text = m_result;
             m_tempValue += ".";
             m_lastVal = '.';
+            StringLabelResize(); // resize label if need be
             answerLbl.Focus();
         }
-
-
-
-
-
         private void btnRightParenth_Click(object sender, EventArgs e) {
+            if (ENTER) ENTER = false;
             m_result += ")";
             answerLbl.Text = m_result;
 
@@ -290,22 +316,22 @@ namespace Calculator {
                 m_errorMessage = "Error";
             } finally {
                 m_lastVal = ')';
+                StringLabelResize(); // resize label if need be
                 answerLbl.Focus();
             }    
         }
         private void btnLeftParenth_Click(object sender, EventArgs e) {
+            if (ENTER) ENTER = false;
             m_result += "(";
             answerLbl.Text = m_result;
             m_operators.Push('(');
             m_tempValue = "";
             m_lastVal = '(';
+            StringLabelResize(); // resize label if need be
             answerLbl.Focus();
         }
-
-
-
-
         private void btnDiv_Click(object sender, EventArgs e) {
+            if (ENTER) ENTER = false;
             m_result += "/";
             answerLbl.Text = m_result;
 
@@ -327,11 +353,13 @@ namespace Calculator {
                     m_errorMessage = "Error";
                 } finally {
                     m_lastVal = '/';
+                    StringLabelResize(); // resize label if need be
                     answerLbl.Focus();
                 }
             }
         }
         private void btnTimes_Click(object sender, EventArgs e) {
+            if (ENTER) ENTER = false;
             m_result += "*";
             answerLbl.Text = m_result;
 
@@ -353,11 +381,13 @@ namespace Calculator {
                     m_errorMessage = "Error";
                 } finally {
                     m_lastVal = '*';
+                    StringLabelResize(); // resize label if need be
                     answerLbl.Focus();
                 }
             }
         }
         private void btnMinus_Click(object sender, EventArgs e) {
+            if (ENTER) ENTER = false;
             m_result += "-";
             answerLbl.Text = m_result;
 
@@ -391,12 +421,14 @@ namespace Calculator {
                         m_errorMessage = "Error";
                     } finally {
                         m_lastVal = '-';
+                        StringLabelResize(); // resize label if need be
                         answerLbl.Focus();
                     }
                 }
             }
         }
         private void btnPlus_Click(object sender, EventArgs e) {
+            if (ENTER) ENTER = false;
             m_result += "+";
             answerLbl.Text = m_result;
 
@@ -422,11 +454,22 @@ namespace Calculator {
                     m_errorMessage = "Error";
                 } finally {
                     m_lastVal = '+';
+                    StringLabelResize(); // resize label if need be
                     answerLbl.Focus();
                 }
             }
         }
 
+        
+        ////////////////////////////////////// HELPER FUNCTIONS ////////////////////////////////////////////
+        
+        /**
+         * Purpose: To perform arithmetic operations based on operator precedence.
+         * Pre: The operator stack and values stack must not be empty to perform calculations
+         * Post: The stacks are modified and the values popped are properly used and the result is 
+         * pushed back on the values stack.
+         * Return: true if no errors occured, else false if there was a stack error or arithmetic error.
+         */
         private bool StackCalc() {
             decimal v1, v2;
             char op;
@@ -492,6 +535,22 @@ namespace Calculator {
             return true; // no issues so continue on
         }
 
-
+        /**
+         * Purpose: To resize the answer label font if the string begins to exceed its max size.
+         * Pre: The label has been instantiated.
+         * Post: The font size is modified if the label characters exceed it.
+         * Return: void
+         * 
+         * Borrowed from https://stackoverflow.com/questions/9527721/resize-text-size-of-a-label-when-the-text-got-longer-than-the-label-size
+         */
+        private void StringLabelResize() {
+            while (answerLbl.Width < TextRenderer.MeasureText(answerLbl.Text, new Font(answerLbl.Font.FontFamily, 
+                                                                                       answerLbl.Font.Size, 
+                                                                                       answerLbl.Font.Style)).Width) {
+                answerLbl.Font = new Font(answerLbl.Font.FontFamily, 
+                                          answerLbl.Font.Size - 0.1f, 
+                                          answerLbl.Font.Style);
+            }
+        }
     }
 }
