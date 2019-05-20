@@ -8,6 +8,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+
+/**
+ * An open source simple calculator for fun!
+ * 
+ * Icon credit: http://www.iconarchive.com/show/android-lollipop-icons-by-dtafalonso/Calculator-icon.html
+ */
+
 namespace Calculator {
     public partial class CalculatorForm : Form {
 
